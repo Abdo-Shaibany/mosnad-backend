@@ -14,7 +14,7 @@ router.post(
     loginValidation,
     schemaErrorHandler,
     login,
-    activitylog("login user")
+    activitylog("login user"),
 );
 
 router.post(

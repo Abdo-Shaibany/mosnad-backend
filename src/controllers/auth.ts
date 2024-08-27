@@ -33,6 +33,13 @@ export const login = async (
         let result: any = { ...user };
 
         delete result.password;
+        await prisma.activityLog.create({
+            data: {
+                action: "login user",
+                userId: user.id!
+            }
+        });
+
         res.status(200).json(jwt.sign(result, process.env['JWT_PASSWORD']!))
     } catch (err) {
         if (err instanceof Prisma.PrismaClientKnownRequestError) {
