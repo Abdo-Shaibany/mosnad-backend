@@ -1,3 +1,5 @@
+import { Role } from "./role.model";
+
 export interface Signup {
     email: string;
     password: string;
@@ -5,6 +7,7 @@ export interface Signup {
 }
 
 export interface User {
+    id?: number;
     email: string;
     password: string;
     username: string;
@@ -12,17 +15,11 @@ export interface User {
     role: Role;
 }
 
-export interface Role {
-    id: number;
-    name: string;
-}
-
 export interface Login {
     email: string;
     password: string;
 }
 
-export interface PremissionModel {
-    id: number;
-    name: string;
+export interface ResetPassword {
+    email: string;
 }
