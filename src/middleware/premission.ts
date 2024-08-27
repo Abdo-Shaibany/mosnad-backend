@@ -3,7 +3,7 @@ import { MyPrisma } from 'src/controllers/prisma';
 
 const prisma = MyPrisma.getInstance();
 
-export const authorizeRoles = (permissions: string[]) => {
+export const authorizePremissions = (permissions: string[]) => {
     return async (req: any, res: Response, next: NextFunction) => {
         try {
             const userId = req.user.id;

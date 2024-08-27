@@ -1,48 +1,41 @@
 import express from 'express';
 
 import schemaErrorHandler from 'src/middleware/schema-error';
-import {
-  createBankCurrency,
-  deleteBankCurrency,
-  getAllCurrencies,
-  getBankCurrencies,
-  getBankCurrencyById,
-  updateBankCurrency,
-} from 'src/controllers/banks_currencies';
+
 import { validatePagedRequest } from 'src/validation-schemas/get_request';
 import { createOptionValidation } from 'src/validation-schemas/option';
-import { createCurrencyValidation } from 'src/validation-schemas/currencies';
 import auth from 'src/middleware/auth';
+import { createRole, deleteRole, getPagedRoles, getRoleById, updateRole } from 'src/controllers/roles';
+import { validateRoleCreate, validateRoleUpdate } from 'src/validation-schemas/roles';
 
 const router = express.Router();
 
-router.get('/', auth, getAllCurrencies);
 
 router.post(
   '/getPaged',
   auth,
   validatePagedRequest,
   schemaErrorHandler,
-  getBankCurrencies
+  getPagedRoles
 );
 
-router.get('/:id', auth, getBankCurrencyById);
+router.get('/:id', auth, getRoleById);
 
 router.post(
   '/',
   auth,
-  createCurrencyValidation,
+  validateRoleCreate,
   schemaErrorHandler,
-  createBankCurrency
+  createRole
 );
 
 router.put(
   '/',
   auth,
-  createCurrencyValidation,
+  validateRoleUpdate,
   schemaErrorHandler,
-  updateBankCurrency
+  updateRole
 );
 
-router.delete('/:id', auth, deleteBankCurrency);
+router.delete('/:id', auth, deleteRole);
 export default router;

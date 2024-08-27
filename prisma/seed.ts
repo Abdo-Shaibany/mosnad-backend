@@ -22,6 +22,9 @@ async function main() {
       {
         name: "user.view_many",
       },
+      {
+        name: "premission.view_many",
+      },
     ]
   });
 
