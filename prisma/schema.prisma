@@ -14,243 +14,34 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String?  @unique
-  password String?
-  username String   @unique
-  phone    String?  @unique
-  Seller   Seller[]
-  roles    Role[]
+  id         Int           @id @default(autoincrement())
+  email      String        @unique
+  username   String        @unique
+  password   String
+  role       Role          @relation(fields: [roleId], references: [id])
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  activities ActivityLog[]
+  roleId     Int
 }
 
 model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  users       User[]
+  premissions Premission[]
+}
+
+model Premission {
   id    Int    @id @default(autoincrement())
   name  String @unique
-  users User[]
+  roles Role[]
 }
 
-model Supplier {
-  id              Int               @id @default(autoincrement())
-  name            String
-  phone           String            @default("771402072")
-  company         String
-  company_address String
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @default(now()) @updatedAt
-  deletedAt       DateTime?
-  Product         Product[]
-  InventorySupply InventorySupply[]
-  ProductForSale  ProductForSale[]
-  Account         Account[]
-}
-
-model Seller {
-  id        Int       @id @default(autoincrement())
-  name      String
-  address   String
-  phone     String
-  status    Boolean
-  account   Account[]
-  user      User      @relation(fields: [userId], references: [id])
+model ActivityLog {
+  id        Int      @id @default(autoincrement())
   userId    Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-}
-
-model Account {
-  id              Int            @id @default(autoincrement())
-  account_number  String
-  account_name    String
-  bank            Bank           @relation(fields: [bankId], references: [id])
-  bankId          Int
-  currency        Bank_currency  @relation(fields: [bank_currencyId], references: [id])
-  bank_currencyId Int
-  bank_location   Bank_location  @relation(fields: [bank_locationId], references: [id])
-  bank_locationId Int
-  supplier        Supplier?      @relation(fields: [supplierId], references: [id])
-  supplierId      Int?
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @default(now()) @updatedAt
-  deletedAt       DateTime?
-  balance         Float          @default(0)
-  FromAccount     Transactions[] @relation(name: "fromAccount")
-  ToAccount       Transactions[] @relation(name: "toAccount")
-  Seller          Seller?        @relation(fields: [sellerId], references: [id])
-  sellerId        Int?
-}
-
-model Transactions {
-  id              Int           @id @default(autoincrement())
-  from            Account       @relation(fields: [fromId], references: [id], name: "fromAccount")
-  fromId          Int
-  to              Account       @relation(fields: [toId], references: [id], name: "toAccount")
-  toId            Int
-  description     String
-  amount          Int
-  currency        Bank_currency @relation(fields: [bank_currencyId], references: [id])
-  bank_currencyId Int
-}
-
-model Product {
-  id             Int              @id @default(autoincrement())
-  category       Cagetory         @relation(fields: [categoryId], references: [id])
-  categoryId     Int
-  name           String
-  length         Float
-  width          Float
-  height         Float
-  brand          String
-  SKU            String           @unique
-  Variant        Variant[]
-  image          Image?           @relation(fields: [imageId], references: [id])
-  supplier       Supplier         @relation(fields: [supplierId], references: [id])
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now()) @updatedAt
-  expiredAt      DateTime?
-  deletedAt      DateTime?
-  supplierId     Int
-  ProductSupply  ProductSupply[]
-  imageId        Int?
-  VariantBasic   VariantBasic[]
-  ProductForSale ProductForSale[]
-}
-
-model Inventory {
-  id              Int               @id @default(autoincrement())
-  text            String
-  deletedAt       DateTime?
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @default(now()) @updatedAt
-  InventorySupply InventorySupply[]
-}
-
-model InventorySupply {
-  id             Int             @id @default(autoincrement())
-  inventory      Inventory       @relation(fields: [inventoryId], references: [id])
-  inventoryId    Int
-  productsSupply ProductSupply[]
-  PO             String?
-  note           String?
-  refNumber      String?
-  status         String          @default("pending")
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @default(now()) @updatedAt
-  cancelledAt    DateTime?
-  deletedAt      DateTime?
-  receivedAt     DateTime?
-  supplier       Supplier        @relation(fields: [supplierId], references: [id])
-  supplierId     Int
-}
-
-model ProductSupply {
-  id                Int              @id @default(autoincrement())
-  product           Product          @relation(fields: [productId], references: [id], onDelete: Restrict)
-  productId         Int
-  InventorySupply   InventorySupply? @relation(fields: [inventorySupplyId], references: [id])
-  inventorySupplyId Int?
-  variantName       String
-  variantSKU        String
-  amount            Int
-  actualAmount      Int              @default(0)
-  variantId         Int?
-  Image             Image?           @relation(fields: [imageId], references: [id])
-  imageId           Int?
-}
-
-model ProductForSale {
-  id             Int              @id @default(autoincrement())
-  product        Product          @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId      Int
-  status         String           @default("pending")
-  description    String?
-  images         Image[]
-  VariantForSale VariantForSale[]
-  supplier       Supplier         @relation(fields: [supplierId], references: [id])
-  supplierId     Int
-}
-
-model VariantForSale {
-  id               Int            @id @default(autoincrement())
-  value            String
-  status           Boolean        @default(false)
-  cost             Float?
-  costCurrency     Bank_currency? @relation(fields: [cost_currencyId], references: [id], name: "cost_currnceyId")
-  price            Float?
-  priceCurrency    Bank_currency? @relation(fields: [price_currencyId], references: [id], name: "price_currencyId")
-  product          ProductForSale @relation(fields: [productForSaleId], references: [id], onDelete: Cascade)
-  productForSaleId Int
-  imageId          Int?
-  SKU              String         @unique
-  image            Image?         @relation(fields: [imageId], references: [id])
-  cost_currencyId  Int?
-  price_currencyId Int?
-}
-
-model Variant {
-  id        Int     @id @default(autoincrement())
-  value     String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  imageId   Int?
-  SKU       String  @unique
-  image     Image?  @relation(fields: [imageId], references: [id])
-}
-
-model VariantBasic {
-  id        Int     @id @default(autoincrement())
-  type      String
-  value     String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-}
-
-model Image {
-  id             Int              @id @default(autoincrement())
-  url            String
-  thumbnail_url  String
-  Product        Product[]
-  Variant        Variant[]
-  ProductForSale ProductForSale[]
-  VariantForSale VariantForSale[]
-  ProductSupply  ProductSupply[]
-}
-
-model Bank {
-  id              Int       @id @default(autoincrement())
-  text            String
-  deletedAt       DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
-  SupplierAccount Account[]
-}
-
-model Bank_location {
-  id              Int       @id @default(autoincrement())
-  text            String
-  deletedAt       DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @default(now()) @updatedAt
-  SupplierAccount Account[]
-}
-
-model Bank_currency {
-  id                  Int              @id @default(autoincrement())
-  text                String
-  short               String
-  deletedAt           DateTime?
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @default(now()) @updatedAt
-  SupplierAccount     Account[]
-  VariantForSaleCost  VariantForSale[] @relation(name: "cost_currnceyId")
-  VariantForSalePrice VariantForSale[] @relation(name: "price_currencyId")
-  Transactions        Transactions[]
-}
-
-model Cagetory {
-  id        Int       @id @default(autoincrement())
-  text      String
-  deletedAt DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now()) @updatedAt
-  Product   Product[]
+  action    String
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }

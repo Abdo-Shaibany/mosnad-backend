@@ -1,13 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { matchedData } from 'express-validator';
 import { MyPrisma } from './prisma';
-import { CurrencyModel } from 'src/models/currency.model';
 import { Prisma } from '@prisma/client';
 import { handleError } from 'src/services/prisma_errors.service';
-import { Login } from 'src/models/auth.model';
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { User } from 'src/models/user.model';
+import { Login, Signup, User } from 'src/models/signup.model';
 
 const prisma = MyPrisma.getInstance();
 
@@ -23,7 +21,7 @@ export const login = async (
                 email
             },
             include: {
-                roles: true
+                role: true
             }
         });
 
@@ -33,9 +31,46 @@ export const login = async (
             return next(handleError(error));
         };
 
-        delete user.password;
-        // TODO: change this to be within env variables
-        res.status(200).json(jwt.sign(user, "myprofit123"))
+        let result: any = { ...user };
+
+        delete result.password;
+        res.status(200).json(jwt.sign(result, process.env['JWT_PASSWORD']!))
+    } catch (err) {
+        if (err instanceof Prisma.PrismaClientKnownRequestError) {
+            return next(handleError(err));
+        }
+        const e: any = Error('Server error should log here :)');
+        next(e);
+    }
+};
+
+export const signup = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    const { email, password, username } = matchedData(req) as Signup;
+    try {
+        const user: User | null = await prisma.user.create({
+            data: {
+                email,
+                password: bcrypt.hashSync(password, 10),
+                username,
+                role: {
+                    connect: {
+                        name: "user"
+                    }
+                }
+            },
+            include: {
+                role: true
+            }
+        });
+
+        let result: any = { ...user };
+
+        delete result.password;
+        res.status(200).json(jwt.sign(result, process.env['JWT_PASSWORD']!))
     } catch (err) {
         if (err instanceof Prisma.PrismaClientKnownRequestError) {
             return next(handleError(err));
