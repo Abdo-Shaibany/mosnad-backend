@@ -62,6 +62,18 @@ async function main() {
     },
   });
 
+  await prisma.user.create({
+    data: {
+      username: "admin",
+      password: bcrypt.hashSync("password", 10),
+      email: "admin@admin.com",
+      role: {
+        connect: {
+          name: "admin",
+        }
+      }
+    }
+  })
 }
 
 main()
