@@ -4,7 +4,7 @@ import { MyPrisma } from './prisma';
 import { Prisma } from '@prisma/client';
 import { handleError } from 'src/services/prisma_errors.service';
 import bcrypt from "bcrypt";
-import { Login, Signup, User } from 'src/models/auth.model';
+import { User } from 'src/models/auth.model';
 import { PagedRequest, Pagination } from 'src/models/pagination.model';
 import { searchFieldsCreator } from 'src/services/util.service';
 

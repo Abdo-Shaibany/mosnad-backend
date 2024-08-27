@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import suppliers from './src/routes/suppliers';
 import banks from './src/routes/banks';
-import banksLocation from './src/routes/banks_locations';
+import banksLocation from './src/routes/user';
 import bankCurrencies from './src/routes/banks_currencies';
 import products from './src/routes/products';
 import images from './src/routes/images';

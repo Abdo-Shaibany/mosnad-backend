@@ -3,7 +3,6 @@ import express from 'express';
 import schemaErrorHandler from 'src/middleware/schema-error';
 
 import { validatePagedRequest } from 'src/validation-schemas/get_request';
-import { createOptionValidation } from 'src/validation-schemas/option';
 import auth from 'src/middleware/auth';
 import { createRole, deleteRole, getPagedRoles, getRoleById, updateRole } from 'src/controllers/roles';
 import { validateRoleCreate, validateRoleUpdate } from 'src/validation-schemas/roles';
