@@ -80,7 +80,7 @@ export const getPagedUser = async (
     try {
         const users: User[] = await prisma.user.findMany({
             where: {
-                OR: searchFieldsCreator(['name', 'email'], search ?? ''),
+                OR: searchFieldsCreator(['username', 'email'], search ?? ''),
             },
             skip: pagination.pageSize * pagination.currentPage,
             take: pagination.pageSize,
@@ -92,7 +92,7 @@ export const getPagedUser = async (
 
         let totalItems = await prisma.user.count({
             where: {
-                OR: searchFieldsCreator(['name', 'email'], search ?? ''),
+                OR: searchFieldsCreator(['username', 'email'], search ?? ''),
             },
         });
 
@@ -105,6 +105,7 @@ export const getPagedUser = async (
             },
         } as Pagination<User>);
     } catch (err) {
+        console.log(err)
         if (err instanceof Prisma.PrismaClientKnownRequestError) {
             return next(handleError(err));
         }
