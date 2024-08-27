@@ -1,0 +1,3 @@
+TODO
+
+    - should have a job every 24 hours to search images against image table and remove the images that it's not within the table :)
