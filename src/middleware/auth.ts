@@ -8,7 +8,7 @@ const auth = (req: any, res: Response, next: NextFunction) => {
         return res.status(401).json({ msg: "Unauthorized" });
     }
 
-    const user = jwt.verify(token, "myprofit123");
+    const user = jwt.verify(token, process.env['JWT_PASSWORD']!);
 
     if (!user) {
         return res.status(401).json({ msg: "Unauthorized" });

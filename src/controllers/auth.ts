@@ -6,9 +6,6 @@ import { handleError } from 'src/services/prisma_errors.service';
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { Login, ResetPassword, Signup, User } from 'src/models/auth.model';
-import { PagedRequest, Pagination } from 'src/models/pagination.model';
-import { searchFieldsCreator } from 'src/services/util.service';
-
 const prisma = MyPrisma.getInstance();
 
 export const login = async (

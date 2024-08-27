@@ -12,7 +12,7 @@ export interface User {
     password: string;
     username: string;
     roleId: number;
-    role: Role;
+    role?: Role;
 }
 
 export interface Login {
